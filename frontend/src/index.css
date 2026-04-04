@@ -1,0 +1,176 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root {
+  --tk-bg: #f6f2e9;
+  --tk-card: #ffffff;
+  --tk-dark: #efe8dc;
+  --tk-text: #18202b;
+  --tk-muted: #5d6672;
+  --tk-border: #d8ccb9;
+  --tk-gold: #c98500;
+  --tk-orange: #e56f1f;
+}
+
+[data-theme="dark"] {
+  --tk-bg: #0f1117;
+  --tk-card: #171a22;
+  --tk-dark: #13161d;
+  --tk-text: #f3f6fb;
+  --tk-muted: #9da7b7;
+  --tk-border: #2a3140;
+  --tk-gold: #ffc561;
+  --tk-orange: #ff8b43;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(
+        circle at 20% 0%,
+        rgba(229, 111, 31, 0.15),
+        transparent 30%
+      ),
+      radial-gradient(
+        circle at 80% 10%,
+        rgba(201, 133, 0, 0.15),
+        transparent 35%
+      ),
+      var(--tk-bg);
+    color: var(--tk-text);
+    font-family: "Manrope", "Segoe UI", sans-serif;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  a {
+    color: inherit;
+  }
+}
+
+@layer components {
+  .badge {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold tracking-wide;
+  }
+
+  .section-title {
+    @apply font-display text-5xl leading-none tracking-wider text-tk-text;
+  }
+
+  .btn-gold {
+    @apply inline-flex items-center justify-center rounded-lg border border-tk-gold px-6 py-3 font-body font-bold text-tk-black;
+    background: linear-gradient(135deg, var(--tk-gold), var(--tk-orange));
+    transition:
+      transform 0.2s ease,
+      filter 0.2s ease;
+  }
+
+  .btn-gold:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-lg border border-tk-border bg-transparent px-6 py-3 font-body font-semibold text-tk-text;
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--tk-gold);
+    color: var(--tk-gold);
+    background-color: color-mix(in srgb, var(--tk-gold) 12%, transparent);
+  }
+
+  .ticket-stub {
+    @apply rounded-xl border border-tk-border bg-tk-card;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .input-dark {
+    @apply w-full rounded-lg border border-tk-border bg-tk-card px-4 py-2.5 font-body text-sm text-tk-text outline-none;
+  }
+
+  .input-dark:focus {
+    border-color: var(--tk-gold);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--tk-gold) 20%, transparent);
+  }
+
+  .tear-line {
+    border-top: 1px dashed var(--tk-border);
+  }
+
+  .bg-hero-gradient {
+    background:
+      radial-gradient(
+        circle at 25% 10%,
+        rgba(255, 197, 97, 0.2),
+        transparent 35%
+      ),
+      radial-gradient(
+        circle at 70% 0%,
+        rgba(255, 139, 67, 0.2),
+        transparent 40%
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--tk-bg) 92%, black) 0%,
+        var(--tk-bg) 100%
+      );
+  }
+
+  .noise-overlay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.08;
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      var(--tk-border) 1px,
+      transparent 1px
+    );
+    background-size: 16px 16px;
+    pointer-events: none;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, var(--tk-gold), var(--tk-orange));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .bg-ticket-pattern {
+    background-image: linear-gradient(
+      45deg,
+      color-mix(in srgb, var(--tk-gold) 5%, transparent) 25%,
+      transparent 25%,
+      transparent 50%,
+      color-mix(in srgb, var(--tk-gold) 5%, transparent) 50%,
+      color-mix(in srgb, var(--tk-gold) 5%, transparent) 75%,
+      transparent 75%,
+      transparent
+    );
+    background-size: 32px 32px;
+  }
+
+  .glow-gold {
+    box-shadow:
+      0 0 0 1px rgba(255, 197, 97, 0.2),
+      0 22px 40px rgba(0, 0, 0, 0.4);
+  }
+}
