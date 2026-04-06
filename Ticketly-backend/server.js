@@ -7,6 +7,7 @@ import reservationsRouter from './routes/reservations.js'
 import ticketsRouter from './routes/Tickets.js'
 import authRouter from './routes/auth.js'
 import { authenticate } from './middleware/auth.js'
+import { protectedWriteRateLimiter } from './middleware/rateLimit.js'
 
 const app = express()
 const PORT = process?.env?.PORT || 5000
@@ -32,9 +33,9 @@ app.use((req, _res, next) => {
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.use('/api/events',       eventsRouter)
 app.use('/api/auth', authRouter)
-app.use('/api/bookings', authenticate, bookingsRouter)
-app.use('/api/reservations', authenticate, reservationsRouter)
-app.use('/api/tickets', authenticate, ticketsRouter)
+app.use('/api/bookings', authenticate, protectedWriteRateLimiter, bookingsRouter)
+app.use('/api/reservations', authenticate, protectedWriteRateLimiter, reservationsRouter)
+app.use('/api/tickets', authenticate, protectedWriteRateLimiter, ticketsRouter)
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => {

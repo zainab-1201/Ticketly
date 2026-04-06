@@ -2,6 +2,7 @@
 import { Router } from 'express'
 import { db, generateId } from '../Backend/db.js'
 import { authenticate } from '../middleware/auth.js'
+import { protectedWriteRateLimiter } from '../middleware/rateLimit.js'
 
 const router = Router()
 
@@ -50,7 +51,7 @@ router.get('/:id', (req, res) => {
 })
 
 // ── POST /api/events ──────────────────────────────────────────────────────────
-router.post('/', authenticate, (req, res) => {
+router.post('/', authenticate, protectedWriteRateLimiter, (req, res) => {
   try {
     const { name, date, time, venue, city, totalSeats, price, category, description, image, tags, featured } = req.body
 
@@ -91,7 +92,7 @@ router.post('/', authenticate, (req, res) => {
 })
 
 // ── PUT /api/events/:id ───────────────────────────────────────────────────────
-router.put('/:id', authenticate, (req, res) => {
+router.put('/:id', authenticate, protectedWriteRateLimiter, (req, res) => {
   try {
     const idx = db.events.findIndex((e) => e.id === req.params.id)
     if (idx < 0) return res.status(404).json({ message: 'Event not found.' })
@@ -122,7 +123,7 @@ router.put('/:id', authenticate, (req, res) => {
 })
 
 // ── DELETE /api/events/:id ────────────────────────────────────────────────────
-router.delete('/:id', authenticate, (req, res) => {
+router.delete('/:id', authenticate, protectedWriteRateLimiter, (req, res) => {
   try {
     const idx = db.events.findIndex((e) => e.id === req.params.id)
     if (idx < 0) return res.status(404).json({ message: 'Event not found.' })

@@ -1,4 +1,5 @@
 // Backend/db.js
+import { randomUUID } from 'node:crypto'
 
 export const db = {
   events: [],
@@ -8,7 +9,7 @@ export const db = {
 }
 
 export function generateId() {
-  return Math.random().toString(36).slice(2, 10)
+  return randomUUID().replace(/-/g, '').slice(0, 12)
 }
 
 export function generateTicketId() {
