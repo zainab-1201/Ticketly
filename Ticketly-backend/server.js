@@ -4,7 +4,7 @@ import cors from 'cors'
 import eventsRouter from './routes/events.js'
 import bookingsRouter from './routes/bookings.js'
 import reservationsRouter from './routes/reservations.js'
-import ticketsRouter from './routes/Tickets.js'
+import ticketsRouter from './routes/tickets.js'
 import authRouter from './routes/auth.js'
 import { authenticate } from './middleware/auth.js'
 import { protectedWriteRateLimiter } from './middleware/rateLimit.js'
@@ -33,9 +33,9 @@ app.use((req, _res, next) => {
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.use('/api/events',       eventsRouter)
 app.use('/api/auth', authRouter)
-app.use('/api/bookings', authenticate, protectedWriteRateLimiter, bookingsRouter)
-app.use('/api/reservations', authenticate, protectedWriteRateLimiter, reservationsRouter)
-app.use('/api/tickets', authenticate, protectedWriteRateLimiter, ticketsRouter)
+app.use('/api/bookings', protectedWriteRateLimiter, authenticate, bookingsRouter)
+app.use('/api/reservations', protectedWriteRateLimiter, authenticate, reservationsRouter)
+app.use('/api/tickets', protectedWriteRateLimiter, authenticate, ticketsRouter)
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => {

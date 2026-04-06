@@ -2,7 +2,7 @@ import { Router } from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import rateLimit from 'express-rate-limit'
-import { db, generateId } from '../Backend/db.js'
+import { db, generateId } from '../db.js'
 
 const router = Router()
 
