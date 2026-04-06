@@ -1,19 +1,25 @@
 // server.js  –  Ticketly Express API
-import express    from 'express'
-import cors       from 'cors'
-import eventsRouter       from './routes/events.js'
-import bookingsRouter     from './routes/bookings.js'
+import express from 'express'
+import cors from 'cors'
+import eventsRouter from './routes/events.js'
+import bookingsRouter from './routes/bookings.js'
 import reservationsRouter from './routes/reservations.js'
-import ticketsRouter      from './routes/tickets.js'
+import ticketsRouter from './routes/Tickets.js'
+import authRouter from './routes/auth.js'
+import { authenticate } from './middleware/auth.js'
 
-const app  = express()
+const app = express()
 const PORT = process?.env?.PORT || 5000
+
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET is required. Please set it in your environment variables.')
+}
 
 // ── Middleware ────────────────────────────────────────────────────────────────
 app.use(cors({
   origin: 'http://localhost:5173',   // React Vite dev server
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }))
 app.use(express.json())
 
@@ -25,9 +31,10 @@ app.use((req, _res, next) => {
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.use('/api/events',       eventsRouter)
-app.use('/api/bookings',     bookingsRouter)
-app.use('/api/reservations', reservationsRouter)
-app.use('/api/tickets',      ticketsRouter)
+app.use('/api/auth', authRouter)
+app.use('/api/bookings', authenticate, bookingsRouter)
+app.use('/api/reservations', authenticate, reservationsRouter)
+app.use('/api/tickets', authenticate, ticketsRouter)
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => {

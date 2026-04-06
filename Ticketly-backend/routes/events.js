@@ -1,6 +1,7 @@
 // routes/events.js
 import { Router } from 'express'
-import { db, generateId } from '../db.js'
+import { db, generateId } from '../Backend/db.js'
+import { authenticate } from '../middleware/auth.js'
 
 const router = Router()
 
@@ -49,7 +50,7 @@ router.get('/:id', (req, res) => {
 })
 
 // ── POST /api/events ──────────────────────────────────────────────────────────
-router.post('/', (req, res) => {
+router.post('/', authenticate, (req, res) => {
   try {
     const { name, date, time, venue, city, totalSeats, price, category, description, image, tags, featured } = req.body
 
@@ -90,7 +91,7 @@ router.post('/', (req, res) => {
 })
 
 // ── PUT /api/events/:id ───────────────────────────────────────────────────────
-router.put('/:id', (req, res) => {
+router.put('/:id', authenticate, (req, res) => {
   try {
     const idx = db.events.findIndex((e) => e.id === req.params.id)
     if (idx < 0) return res.status(404).json({ message: 'Event not found.' })
@@ -121,7 +122,7 @@ router.put('/:id', (req, res) => {
 })
 
 // ── DELETE /api/events/:id ────────────────────────────────────────────────────
-router.delete('/:id', (req, res) => {
+router.delete('/:id', authenticate, (req, res) => {
   try {
     const idx = db.events.findIndex((e) => e.id === req.params.id)
     if (idx < 0) return res.status(404).json({ message: 'Event not found.' })

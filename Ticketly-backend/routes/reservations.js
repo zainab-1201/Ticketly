@@ -1,6 +1,6 @@
 // routes/reservations.js
 import { Router } from 'express'
-import { db, generateId } from '../db.js'
+import { db, generateId } from '../Backend/db.js'
 
 const router = Router()
 
