@@ -4,6 +4,7 @@ import Reservation from '../models/Reservation.js'
 import { ApiError } from '../utils/apiError.js'
 import { generateBookingRef } from '../utils/ids.js'
 import { createTicketFromPayload } from './ticketService.js'
+import mongoose from 'mongoose'
 
 function formatBooking(doc) {
   const b = doc.toObject()
@@ -78,7 +79,13 @@ export async function createBooking({ eventId, seats, holderName, holderEmail, r
 }
 
 export async function listBookings({ eventId }) {
-  const query = eventId ? { eventId } : {}
+  const query = {}
+  if (eventId !== undefined) {
+    if (typeof eventId !== 'string' || !mongoose.isValidObjectId(eventId)) {
+      throw new ApiError(400, 'Invalid eventId filter.')
+    }
+    query.eventId = eventId
+  }
   const bookings = await Booking.find(query).sort({ createdAt: -1 })
   return bookings.map(formatBooking)
 }

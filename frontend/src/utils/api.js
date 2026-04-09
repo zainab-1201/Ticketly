@@ -28,7 +28,7 @@ async function request(path, options = {}) {
   const body = contentType.includes('application/json') ? await res.json() : null
 
   if (!res.ok) {
-    throw new Error(body?.message || 'Request failed.')
+    throw new Error(body?.message || `Request failed (${res.status} ${res.statusText}).`)
   }
 
   return body

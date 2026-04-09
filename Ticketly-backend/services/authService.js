@@ -13,7 +13,16 @@ function sanitizeUser(user) {
 }
 
 function validateEmail(email) {
-  return /^\S+@\S+\.\S+$/.test(email)
+  if (typeof email !== 'string') return false
+  const normalized = email.trim()
+  if (normalized.length > 254) return false
+  const parts = normalized.split('@')
+  if (parts.length !== 2) return false
+  const [localPart, domain] = parts
+  if (!localPart || !domain || localPart.length > 64) return false
+  if (!/^[A-Za-z0-9._%+-]+$/.test(localPart)) return false
+  if (!/^[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(domain)) return false
+  return true
 }
 
 export async function registerUser({ name, email, password }) {

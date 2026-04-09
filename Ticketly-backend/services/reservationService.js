@@ -3,6 +3,7 @@ import Reservation from '../models/Reservation.js'
 import { ApiError } from '../utils/apiError.js'
 import { env } from '../config/env.js'
 import { generateReservationRef } from '../utils/ids.js'
+import mongoose from 'mongoose'
 
 function formatReservation(doc) {
   const r = doc.toObject()
@@ -52,10 +53,13 @@ export async function cancelReservation(id) {
     throw new ApiError(400, 'Only active reservations can be cancelled.')
   }
 
-  await Event.findOneAndUpdate(
+  const seatRelease = await Event.findOneAndUpdate(
     { _id: reservation.eventId, reservedSeats: { $gte: reservation.seats } },
     { $inc: { reservedSeats: -reservation.seats } }
   )
+  if (!seatRelease) {
+    throw new ApiError(409, 'Unable to release reserved seats for this reservation.')
+  }
 
   reservation.status = 'Cancelled'
   await reservation.save()
@@ -64,7 +68,13 @@ export async function cancelReservation(id) {
 }
 
 export async function listReservations({ eventId }) {
-  const query = eventId ? { eventId } : {}
+  const query = {}
+  if (eventId !== undefined) {
+    if (typeof eventId !== 'string' || !mongoose.isValidObjectId(eventId)) {
+      throw new ApiError(400, 'Invalid eventId filter.')
+    }
+    query.eventId = eventId
+  }
   const reservations = await Reservation.find(query).sort({ createdAt: -1 })
   return reservations.map(formatReservation)
 }

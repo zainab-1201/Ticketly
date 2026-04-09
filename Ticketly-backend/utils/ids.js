@@ -1,5 +1,7 @@
+import crypto from 'crypto'
+
 function randomPart() {
-  return Math.random().toString(36).slice(2, 8).toUpperCase()
+  return crypto.randomBytes(4).toString('hex').toUpperCase()
 }
 
 export function generateBookingRef() {

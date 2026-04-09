@@ -1,5 +1,6 @@
 import Event from '../models/Event.js'
 import { ApiError } from '../utils/apiError.js'
+import { escapeRegex } from '../utils/sanitize.js'
 
 function formatEvent(eventDoc) {
   const e = eventDoc.toObject()
@@ -8,17 +9,20 @@ function formatEvent(eventDoc) {
 
 export async function listEvents({ category, search, featured }) {
   const query = {}
+  const safeCategory = typeof category === 'string' ? category : undefined
+  const safeFeatured = typeof featured === 'string' ? featured : undefined
+  const safeSearch = typeof search === 'string' ? search : undefined
 
-  if (category && category !== 'All') {
-    query.category = category
+  if (safeCategory && safeCategory !== 'All') {
+    query.category = safeCategory
   }
 
-  if (featured === 'true') {
+  if (safeFeatured === 'true') {
     query.featured = true
   }
 
-  if (search) {
-    const q = search.trim()
+  if (safeSearch) {
+    const q = escapeRegex(safeSearch.trim())
     query.$or = [
       { name: new RegExp(q, 'i') },
       { venue: new RegExp(q, 'i') },

@@ -19,6 +19,7 @@ export async function requireAuth(req, _res, next) {
     req.user = user
     return next()
   } catch {
+    console.warn('Auth token verification failed.')
     return next(new ApiError(401, 'Invalid or expired token.'))
   }
 }
