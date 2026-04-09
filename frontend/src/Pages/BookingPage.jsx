@@ -28,7 +28,7 @@ export default function BookingPage() {
   const type = searchParams.get("type") === "reserve" ? "reserve" : "book";
 
   const { events, editEvent } = useEvents();
-  const { createTicket } = useBookings();
+  const { issueTicket } = useBookings();
 
   const [form, setForm] = useState(INITIAL_FORM);
   const [error, setError] = useState("");
@@ -93,7 +93,7 @@ export default function BookingPage() {
     return "";
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const validationError = validate();
 
@@ -105,28 +105,33 @@ export default function BookingPage() {
     setSubmitting(true);
     setError("");
 
-    const payload = {
-      type,
-      seats: Number(form.seats),
-      holderName: form.holderName.trim(),
-      holderEmail: form.holderEmail.trim(),
-      price: event.price,
-      eventId: event.id,
-      eventName: event.name,
-      eventDate: event.date,
-      eventTime: event.time,
-      venue: event.venue,
-    };
-
-    const ticket = createTicket(payload);
-
     const seatKey = type === "reserve" ? "reservedSeats" : "bookedSeats";
-    editEvent({
-      ...event,
-      [seatKey]: Number(event[seatKey] || 0) + Number(form.seats),
-    });
 
-    navigate(`/ticket/${ticket.ticketId}`);
+    try {
+      const ticket = await issueTicket({
+        eventId: event.id,
+        eventName: event.name,
+        eventDate: event.date,
+        eventTime: event.time,
+        venue: event.venue,
+        seats: Number(form.seats),
+        pricePerSeat: Number(event.price),
+        status: type === "reserve" ? "Reserved" : "Booked",
+        holderName: form.holderName.trim(),
+        holderEmail: form.holderEmail.trim(),
+      });
+
+      await editEvent(event.id, {
+        ...event,
+        [seatKey]: Number(event[seatKey] || 0) + Number(form.seats),
+      });
+
+      navigate(`/ticket/${ticket.ticketId}`);
+    } catch (err) {
+      setError(err?.message || "Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   const totalPrice = Number(form.seats || 0) * Number(event.price || 0);

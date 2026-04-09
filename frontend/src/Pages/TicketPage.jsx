@@ -1,4 +1,5 @@
 // src/pages/TicketPage.jsx
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useBookings } from "../hooks/useBookings";
 import { formatDate, formatTime, formatPrice } from "../utils/helpers";
@@ -65,10 +66,46 @@ function QRPlaceholder({ value }) {
 export default function TicketPage() {
   const { ticketId } = useParams();
   const { getTicket } = useBookings();
-  const ticket = getTicket(ticketId);
+  const [ticket, setTicket] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    setLoading(true);
+    getTicket(ticketId)
+      .then((data) => {
+        if (isMounted) {
+          setTicket(data);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setTicket(null);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [getTicket, ticketId]);
 
   function handlePrint() {
     window.print();
+  }
+
+  if (loading) {
+    return (
+      <div className="pt-32 min-h-screen flex flex-col items-center justify-center gap-4 text-center px-4">
+        <span className="text-6xl">🎟️</span>
+        <p className="text-tk-muted font-body">Loading ticket…</p>
+      </div>
+    );
   }
 
   if (!ticket) {

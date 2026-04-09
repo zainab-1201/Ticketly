@@ -102,7 +102,7 @@ export default function AdminPage() {
     }
 
     if (editingId) {
-      editEvent(eventData)
+      editEvent(editingId, eventData)
       showToast('Event updated successfully!')
     } else {
       addEvent(eventData)

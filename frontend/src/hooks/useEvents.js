@@ -28,8 +28,10 @@ export function useEvents(filters = {}) {
     return created
   }, [load])
 
-  const editEvent = useCallback(async (id, eventData) => {
-    const updated = await updateEvent(id, eventData)
+  const editEvent = useCallback(async (idOrData, eventData) => {
+    const resolvedId = typeof idOrData === 'string' ? idOrData : idOrData?.id
+    const resolvedData = eventData || idOrData
+    const updated = await updateEvent(resolvedId, resolvedData)
     await load()
     return updated
   }, [load])
