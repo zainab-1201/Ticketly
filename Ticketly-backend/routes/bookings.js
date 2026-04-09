@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { asyncHandler } from '../utils/asyncHandler.js'
-import { validateBody, requiredPositiveNumber, requiredString } from '../middleware/validate.js'
+import { validateBody, requiredPositiveNumber } from '../middleware/validate.js'
 import { getBooking, getBookings, postBooking } from '../controllers/bookingController.js'
 import { ApiError } from '../utils/apiError.js'
 
@@ -21,7 +21,7 @@ router.post('/', validateBody((body) => {
     holderName: body.holderName,
     holderEmail: body.holderEmail,
   }
-})), asyncHandler(postBooking))
+}), asyncHandler(postBooking))
 
 router.get('/', asyncHandler(getBookings))
 router.get('/:id', asyncHandler(getBooking))
